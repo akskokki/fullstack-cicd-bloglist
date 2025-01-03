@@ -1,0 +1,37 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deployment:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+
+      - name: CLIENT - Install dependencies
+        working-directory: client
+        run: npm install
+      - name: CLIENT - Run unit tests
+        working-directory: client
+        run: npm run test
+      - name: CLIENT - Run eslint
+        working-directory: client
+        run: npm run lint
+      - name: CLIENT - Build client
+        working-directory: client
+        run: npm run build
+
+      - name: Install dependencies
+        run: npm install
+      - name: Run unit tests
+        run: npm run test
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run e2e tests
+        run: npm run test:e2e
